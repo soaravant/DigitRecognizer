@@ -382,19 +382,37 @@ class MLModelHandler {
             }
         }
         
-        // Simple heuristics to guess the digit
+        // Enhanced heuristics to guess the digit
         let likelyDigit = 0;
+        const centerRatio = centerPixels / (totalPixels || 1);
+        const edgeRatio = edgePixels / (totalPixels || 1);
         
-        if (centerPixels / totalPixels > 0.6) {
-            likelyDigit = 0; // Circle-like shape
-        } else if (edgePixels / totalPixels > 0.3) {
-            likelyDigit = 1; // Line-like shape
+        if (totalPixels < 50) {
+            likelyDigit = 1; // Very thin
+        } else if (centerRatio > 0.6) {
+            likelyDigit = 8; // Very dense center
+        } else if (edgeRatio > 0.5 && centerRatio < 0.4) {
+            likelyDigit = 0; // Ring-like
         } else if (totalPixels > 200) {
             likelyDigit = 8; // Complex shape
         } else if (totalPixels > 150) {
             likelyDigit = 6; // Medium complexity
+        } else if (centerRatio > 0.4 && edgeRatio > 0.3) {
+            likelyDigit = 9; // Balanced
+        } else if (edgeRatio > 0.4) {
+            likelyDigit = 2; // Edge heavy
         } else {
-            likelyDigit = Math.floor(Math.random() * 10); // Random fallback
+            // Weighted random selection
+            const weights = [0.12, 0.15, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.03];
+            const random = Math.random();
+            let cumulative = 0;
+            for (let i = 0; i < 10; i++) {
+                cumulative += weights[i];
+                if (random < cumulative) {
+                    likelyDigit = i;
+                    break;
+                }
+            }
         }
         
         return {
