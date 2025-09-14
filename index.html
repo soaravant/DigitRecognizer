@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigitRecognizer - Handwritten Digit Recognition</title>
+    <meta name="description" content="Draw numbers on the canvas and watch AI recognize them in real-time using machine learning">
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">DigitRecognizer</h1>
+            <p class="subtitle">Draw a digit and watch AI recognize it!</p>
+        </header>
+
+        <main class="main-content">
+            <div class="canvas-container">
+                <div class="model-selector">
+                    <h3>Select Model Architecture</h3>
+                    <div class="model-grid" id="modelGrid">
+                        <!-- Models will be loaded dynamically -->
+                    </div>
+                    <div class="model-info" id="modelInfo">
+                        <p>Select a model to see its details and start predicting</p>
+                    </div>
+                </div>
+                
+                <div class="canvas-wrapper">
+                    <canvas id="drawingCanvas" width="200" height="200"></canvas>
+                    <div class="canvas-overlay" id="canvasOverlay">
+                        <div class="loading-spinner" id="loadingSpinner">
+                            <div class="spinner"></div>
+                            <p>Loading AI model...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="canvas-controls">
+                    <button id="clearButton" class="btn btn-primary">Clear Canvas</button>
+                    <div class="brush-controls">
+                        <label for="brushSize">Brush Size:</label>
+                        <input type="range" id="brushSize" min="1" max="10" value="3">
+                        <span id="brushSizeValue">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prediction-container">
+                <div class="prediction-header">
+                    <h2>Model Predictions</h2>
+                    <div class="comparison-toggle">
+                        <button id="compareModeBtn" class="btn btn-secondary">Compare All Models</button>
+                    </div>
+                </div>
+                
+                <!-- Single Model View -->
+                <div class="single-model-view" id="singleModelView">
+                    <div class="model-prediction-header">
+                        <h3 id="currentModelName">Select a Model</h3>
+                        <div class="confidence-indicator" id="confidenceIndicator">
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="confidenceFill"></div>
+                            </div>
+                            <span class="confidence-text" id="confidenceText">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="prediction-results" id="predictionResults">
+                        <div class="prediction-item">
+                            <span class="digit">-</span>
+                            <span class="probability">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="top-predictions" id="topPredictions">
+                        <h3>Top 3 Predictions</h3>
+                        <div class="predictions-list" id="predictionsList">
+                            <div class="prediction-row">
+                                <span class="rank">1.</span>
+                                <span class="digit">-</span>
+                                <div class="probability-bar">
+                                    <div class="probability-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="percentage">0%</span>
+                            </div>
+                            <div class="prediction-row">
+                                <span class="rank">2.</span>
+                                <span class="digit">-</span>
+                                <div class="probability-bar">
+                                    <div class="probability-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="percentage">0%</span>
+                            </div>
+                            <div class="prediction-row">
+                                <span class="rank">3.</span>
+                                <span class="digit">-</span>
+                                <div class="probability-bar">
+                                    <div class="probability-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="percentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison View -->
+                <div class="comparison-view" id="comparisonView" style="display: none;">
+                    <h3>All Models Comparison</h3>
+                    <div class="models-comparison" id="modelsComparison">
+                        <!-- Model predictions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Draw a digit (0-9) on the canvas using your mouse or touch</li>
+                <li>Watch the AI predict the digit in real-time</li>
+                <li>Clear the canvas to try another digit</li>
+                <li>Adjust brush size for different line thickness</li>
+            </ol>
+        </div>
+
+        <footer class="footer">
+            <p>Built with TensorFlow.js | Handwritten Digit Recognition</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/canvas.js"></script>
+    <script src="scripts/ml-model.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
