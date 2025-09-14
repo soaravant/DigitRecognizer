@@ -1,6 +1,6 @@
-# DigitRecognizer - Handwritten Digit Recognition Web App
+# Numberly - Handwritten Digit Recognition Web App
 
-A modern web application that uses machine learning to recognize handwritten digits in real-time. Draw numbers on a 200x200px canvas and watch AI predict them instantly using TensorFlow.js.
+A modern web application that uses machine learning to recognize handwritten digits in real-time. Draw numbers on a 200x200px canvas and watch AI predict them instantly using TensorFlow.js with 10 different model architectures for comparison.
 
 ![DigitRecognizer Demo](https://via.placeholder.com/800x400/667eea/ffffff?text=DigitRecognizer+Demo)
 
@@ -8,11 +8,14 @@ A modern web application that uses machine learning to recognize handwritten dig
 
 - **Interactive Canvas**: Draw digits with mouse or touch input
 - **Real-time Recognition**: Instant AI predictions as you draw
-- **Modern UI**: Beautiful, responsive design with smooth animations
+- **10 Model Architectures**: Compare different AI models side-by-side
+- **Model Comparison**: Switch between single model view and comparison mode
+- **Modern UI**: Beautiful, responsive three-pane layout
 - **Multiple Predictions**: See top 3 predictions with confidence scores
 - **Mobile Friendly**: Works on desktop, tablet, and mobile devices
-- **Fallback Mode**: Works even without a trained model
+- **Fallback Mode**: Works even without trained models
 - **Brush Controls**: Adjustable brush size for different line thickness
+- **Auto-Reload Development**: Automatic browser refresh during development
 
 ## 🛠️ Technologies Used
 
@@ -46,6 +49,24 @@ DigitRecognizer/
 ```
 
 ## 🚀 Quick Start
+
+### Development Mode (Recommended)
+```bash
+# Start development server with auto-reload
+./dev.sh
+
+# Or use npm script
+npm run dev
+
+# Or run directly
+python3 simple_dev_server.py
+```
+
+The development server will:
+- Start on http://localhost:8000
+- Automatically open your browser
+- Watch for file changes and reload the browser
+- Show console messages when files change
 
 ### Option 1: Use the Web App (No Training Required)
 

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "python3 -m http.server 8000",
     "serve": "npx serve .",
-    "dev": "npx live-server --port=8000 --open=/index.html",
+    "dev": "python3 simple_dev_server.py",
+    "dev-live": "npx live-server --port=8000 --open=/index.html",
     "build": "echo 'Static site - no build needed'",
     "deploy": "vercel --prod",
     "train": "cd training && python train_model.py",
