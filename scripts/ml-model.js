@@ -317,44 +317,495 @@ class MLModelHandler {
     }
     
     fallbackPrediction(imageData) {
-        // Simple fallback prediction based on image analysis
-        // This is a basic heuristic-based approach for demonstration
+        // Advanced fallback prediction with sophisticated image analysis
+        const analysis = this.advancedImageAnalysis(imageData);
+        const predictions = this.generatePredictionsFromAnalysis(analysis);
         
-        const results = [];
+        // Sort by probability
+        predictions.sort((a, b) => b.probability - a.probability);
         
-        // Analyze the image data to make a simple prediction
-        const analysis = this.analyzeImage(imageData);
+        return {
+            predictions: predictions,
+            topPrediction: predictions[0],
+            confidence: predictions[0].probability,
+            fallback: true
+        };
+    }
+    
+    advancedImageAnalysis(imageData) {
+        // Convert image data to 2D array for analysis
+        const width = 28;
+        const height = 28;
+        const image = [];
+        
+        // Initialize 2D array
+        for (let y = 0; y < height; y++) {
+            image[y] = [];
+            for (let x = 0; x < width; x++) {
+                image[y][x] = 0;
+            }
+        }
+        
+        // Fill 2D array with pixel data
+        for (let i = 0; i < imageData.length; i++) {
+            const x = i % width;
+            const y = Math.floor(i / width);
+            image[y][x] = imageData[i] > 0.1 ? 1 : 0;
+        }
+        
+        // Calculate various features
+        const features = this.calculateFeatures(image, width, height);
+        
+        // Analyze patterns
+        const patterns = this.analyzePatterns(image, width, height);
+        
+        // Determine most likely digit
+        const likelyDigit = this.classifyDigit(features, patterns);
+        
+        return {
+            image,
+            features,
+            patterns,
+            likelyDigit
+        };
+    }
+    
+    calculateFeatures(image, width, height) {
+        let totalPixels = 0;
+        let centerPixels = 0;
+        let edgePixels = 0;
+        let topPixels = 0;
+        let bottomPixels = 0;
+        let leftPixels = 0;
+        let rightPixels = 0;
+        let horizontalLines = 0;
+        let verticalLines = 0;
+        let diagonalLines = 0;
+        
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                if (image[y][x] === 1) {
+                    totalPixels++;
+                    
+                    // Region analysis
+                    const distanceFromCenter = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+                    if (distanceFromCenter < width * 0.3) centerPixels++;
+                    if (distanceFromCenter > width * 0.4) edgePixels++;
+                    
+                    // Quadrant analysis
+                    if (y < height * 0.3) topPixels++;
+                    if (y > height * 0.7) bottomPixels++;
+                    if (x < width * 0.3) leftPixels++;
+                    if (x > width * 0.7) rightPixels++;
+                    
+                    // Line detection
+                    if (this.isHorizontalLine(image, x, y, width, height)) horizontalLines++;
+                    if (this.isVerticalLine(image, x, y, width, height)) verticalLines++;
+                    if (this.isDiagonalLine(image, x, y, width, height)) diagonalLines++;
+                }
+            }
+        }
+        
+        return {
+            totalPixels,
+            centerPixels,
+            edgePixels,
+            topPixels,
+            bottomPixels,
+            leftPixels,
+            rightPixels,
+            horizontalLines,
+            verticalLines,
+            diagonalLines,
+            centerRatio: centerPixels / (totalPixels || 1),
+            edgeRatio: edgePixels / (totalPixels || 1),
+            topRatio: topPixels / (totalPixels || 1),
+            bottomRatio: bottomPixels / (totalPixels || 1),
+            leftRatio: leftPixels / (totalPixels || 1),
+            rightRatio: rightPixels / (totalPixels || 1)
+        };
+    }
+    
+    analyzePatterns(image, width, height) {
+        const patterns = {
+            hasLoop: false,
+            hasVerticalLine: false,
+            hasHorizontalLine: false,
+            hasCurve: false,
+            isSymmetric: false,
+            hasGap: false,
+            isThin: false,
+            isThick: false
+        };
+        
+        // Check for loops (like in 0, 6, 8, 9)
+        patterns.hasLoop = this.detectLoop(image, width, height);
+        
+        // Check for vertical lines (like in 1, 4, 7)
+        patterns.hasVerticalLine = this.detectVerticalLine(image, width, height);
+        
+        // Check for horizontal lines (like in 2, 3, 5, 7)
+        patterns.hasHorizontalLine = this.detectHorizontalLine(image, width, height);
+        
+        // Check for curves (like in 2, 3, 5, 6, 9)
+        patterns.hasCurve = this.detectCurve(image, width, height);
+        
+        // Check for symmetry
+        patterns.isSymmetric = this.checkSymmetry(image, width, height);
+        
+        // Check for gaps (like in 4, 6, 8, 9)
+        patterns.hasGap = this.detectGap(image, width, height);
+        
+        // Check thickness
+        const thickness = this.calculateThickness(image, width, height);
+        patterns.isThin = thickness < 3;
+        patterns.isThick = thickness > 5;
+        
+        return patterns;
+    }
+    
+    classifyDigit(features, patterns) {
+        // Advanced classification based on features and patterns
+        const scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        
+        // Digit 0: Circular, symmetric, has loop
+        if (patterns.hasLoop && patterns.isSymmetric && features.centerRatio > 0.4) {
+            scores[0] += 0.8;
+        }
+        if (features.edgeRatio > 0.5 && features.centerRatio < 0.3) {
+            scores[0] += 0.6;
+        }
+        
+        // Digit 1: Vertical line, thin, asymmetric
+        if (patterns.hasVerticalLine && patterns.isThin) {
+            scores[1] += 0.9;
+        }
+        if (features.totalPixels < 50) {
+            scores[1] += 0.7;
+        }
+        if (!patterns.isSymmetric) {
+            scores[1] += 0.3;
+        }
+        
+        // Digit 2: Horizontal lines, curves, asymmetric
+        if (patterns.hasHorizontalLine && patterns.hasCurve) {
+            scores[2] += 0.8;
+        }
+        if (features.topRatio > 0.3 && features.bottomRatio > 0.2) {
+            scores[2] += 0.6;
+        }
+        
+        // Digit 3: Horizontal lines, curves, right-heavy
+        if (patterns.hasHorizontalLine && patterns.hasCurve) {
+            scores[3] += 0.7;
+        }
+        if (features.rightRatio > features.leftRatio) {
+            scores[3] += 0.5;
+        }
+        
+        // Digit 4: Vertical and horizontal lines, has gap
+        if (patterns.hasVerticalLine && patterns.hasHorizontalLine && patterns.hasGap) {
+            scores[4] += 0.9;
+        }
+        if (features.topRatio > 0.3 && features.bottomRatio > 0.3) {
+            scores[4] += 0.4;
+        }
+        
+        // Digit 5: Horizontal lines, curves, top-heavy
+        if (patterns.hasHorizontalLine && patterns.hasCurve) {
+            scores[5] += 0.7;
+        }
+        if (features.topRatio > features.bottomRatio) {
+            scores[5] += 0.5;
+        }
+        
+        // Digit 6: Has loop, curves, bottom-heavy
+        if (patterns.hasLoop && patterns.hasCurve) {
+            scores[6] += 0.8;
+        }
+        if (features.bottomRatio > features.topRatio) {
+            scores[6] += 0.4;
+        }
+        
+        // Digit 7: Horizontal line, vertical line, top-heavy
+        if (patterns.hasHorizontalLine && patterns.hasVerticalLine) {
+            scores[7] += 0.8;
+        }
+        if (features.topRatio > 0.4) {
+            scores[7] += 0.5;
+        }
+        
+        // Digit 8: Has loop, symmetric, thick
+        if (patterns.hasLoop && patterns.isSymmetric && patterns.isThick) {
+            scores[8] += 0.9;
+        }
+        if (features.centerRatio > 0.5 && features.edgeRatio > 0.3) {
+            scores[8] += 0.6;
+        }
+        
+        // Digit 9: Has loop, curves, top-heavy
+        if (patterns.hasLoop && patterns.hasCurve) {
+            scores[9] += 0.8;
+        }
+        if (features.topRatio > features.bottomRatio) {
+            scores[9] += 0.4;
+        }
+        
+        // Find digit with highest score
+        let maxScore = 0;
+        let likelyDigit = 0;
+        for (let i = 0; i < 10; i++) {
+            if (scores[i] > maxScore) {
+                maxScore = scores[i];
+                likelyDigit = i;
+            }
+        }
+        
+        return likelyDigit;
+    }
+    
+    generatePredictionsFromAnalysis(analysis) {
+        const predictions = [];
+        const { features, patterns, likelyDigit } = analysis;
         
         // Generate predictions based on analysis
         for (let i = 0; i < 10; i++) {
-            let probability = Math.random() * 0.1; // Base random probability
+            let probability = 0.05; // Base probability
             
-            // Add some heuristics based on image analysis
-            if (i === analysis.likelyDigit) {
-                probability = 0.7 + Math.random() * 0.2; // Higher probability for likely digit
-            } else if (this.isSimilarDigit(i, analysis.likelyDigit)) {
-                probability = 0.2 + Math.random() * 0.3; // Medium probability for similar digits
+            // Primary prediction gets high probability
+            if (i === likelyDigit) {
+                probability = 0.6 + Math.random() * 0.3;
+            }
+            // Similar digits get medium probability
+            else if (this.isSimilarDigit(i, likelyDigit)) {
+                probability = 0.2 + Math.random() * 0.2;
+            }
+            // Other digits get low probability
+            else {
+                probability = 0.05 + Math.random() * 0.1;
             }
             
-            results.push({
+            // Adjust based on specific features
+            probability = this.adjustProbabilityForDigit(i, probability, features, patterns);
+            
+            predictions.push({
                 digit: i,
                 probability: Math.min(probability, 1.0)
             });
         }
         
         // Normalize probabilities
-        const total = results.reduce((sum, r) => sum + r.probability, 0);
-        results.forEach(r => r.probability = r.probability / total);
+        const total = predictions.reduce((sum, p) => sum + p.probability, 0);
+        predictions.forEach(p => p.probability = p.probability / total);
         
-        // Sort by probability
-        results.sort((a, b) => b.probability - a.probability);
+        return predictions;
+    }
+    
+    adjustProbabilityForDigit(digit, baseProb, features, patterns) {
+        let adjusted = baseProb;
         
-        return {
-            predictions: results,
-            topPrediction: results[0],
-            confidence: results[0].probability,
-            fallback: true
-        };
+        switch (digit) {
+            case 0:
+                if (patterns.hasLoop && patterns.isSymmetric) adjusted *= 1.5;
+                if (features.edgeRatio > 0.4) adjusted *= 1.3;
+                break;
+            case 1:
+                if (patterns.isThin && features.totalPixels < 60) adjusted *= 1.5;
+                if (patterns.hasVerticalLine) adjusted *= 1.4;
+                break;
+            case 2:
+                if (patterns.hasHorizontalLine && patterns.hasCurve) adjusted *= 1.4;
+                if (features.topRatio > 0.3) adjusted *= 1.2;
+                break;
+            case 3:
+                if (patterns.hasHorizontalLine && patterns.hasCurve) adjusted *= 1.3;
+                if (features.rightRatio > features.leftRatio) adjusted *= 1.2;
+                break;
+            case 4:
+                if (patterns.hasVerticalLine && patterns.hasHorizontalLine) adjusted *= 1.5;
+                if (patterns.hasGap) adjusted *= 1.3;
+                break;
+            case 5:
+                if (patterns.hasHorizontalLine && patterns.hasCurve) adjusted *= 1.3;
+                if (features.topRatio > features.bottomRatio) adjusted *= 1.2;
+                break;
+            case 6:
+                if (patterns.hasLoop && patterns.hasCurve) adjusted *= 1.4;
+                if (features.bottomRatio > features.topRatio) adjusted *= 1.2;
+                break;
+            case 7:
+                if (patterns.hasHorizontalLine && patterns.hasVerticalLine) adjusted *= 1.4;
+                if (features.topRatio > 0.4) adjusted *= 1.3;
+                break;
+            case 8:
+                if (patterns.hasLoop && patterns.isSymmetric) adjusted *= 1.5;
+                if (patterns.isThick) adjusted *= 1.3;
+                break;
+            case 9:
+                if (patterns.hasLoop && patterns.hasCurve) adjusted *= 1.4;
+                if (features.topRatio > features.bottomRatio) adjusted *= 1.2;
+                break;
+        }
+        
+        return adjusted;
+    }
+    
+    // Helper methods for pattern detection
+    isHorizontalLine(image, x, y, width, height) {
+        if (x < 2 || x >= width - 2) return false;
+        return image[y][x-1] === 1 && image[y][x] === 1 && image[y][x+1] === 1;
+    }
+    
+    isVerticalLine(image, x, y, width, height) {
+        if (y < 2 || y >= height - 2) return false;
+        return image[y-1][x] === 1 && image[y][x] === 1 && image[y+1][x] === 1;
+    }
+    
+    isDiagonalLine(image, x, y, width, height) {
+        if (x < 1 || x >= width - 1 || y < 1 || y >= height - 1) return false;
+        return (image[y-1][x-1] === 1 && image[y][x] === 1 && image[y+1][x+1] === 1) ||
+               (image[y-1][x+1] === 1 && image[y][x] === 1 && image[y+1][x-1] === 1);
+    }
+    
+    detectLoop(image, width, height) {
+        // Simple loop detection - check for enclosed regions
+        const centerX = Math.floor(width / 2);
+        const centerY = Math.floor(height / 2);
+        
+        // Check if center is surrounded by pixels
+        let surroundingPixels = 0;
+        for (let dy = -2; dy <= 2; dy++) {
+            for (let dx = -2; dx <= 2; dx++) {
+                const x = centerX + dx;
+                const y = centerY + dy;
+                if (x >= 0 && x < width && y >= 0 && y < height && image[y][x] === 1) {
+                    surroundingPixels++;
+                }
+            }
+        }
+        
+        return surroundingPixels > 8;
+    }
+    
+    detectVerticalLine(image, width, height) {
+        const centerX = Math.floor(width / 2);
+        let verticalPixels = 0;
+        
+        for (let y = 0; y < height; y++) {
+            if (image[y][centerX] === 1) verticalPixels++;
+        }
+        
+        return verticalPixels > height * 0.6;
+    }
+    
+    detectHorizontalLine(image, width, height) {
+        const centerY = Math.floor(height / 2);
+        let horizontalPixels = 0;
+        
+        for (let x = 0; x < width; x++) {
+            if (image[centerY][x] === 1) horizontalPixels++;
+        }
+        
+        return horizontalPixels > width * 0.4;
+    }
+    
+    detectCurve(image, width, height) {
+        // Simple curve detection - look for non-linear patterns
+        let curvePoints = 0;
+        for (let y = 1; y < height - 1; y++) {
+            for (let x = 1; x < width - 1; x++) {
+                if (image[y][x] === 1) {
+                    // Check for curved patterns
+                    const neighbors = [
+                        image[y-1][x-1], image[y-1][x], image[y-1][x+1],
+                        image[y][x-1], image[y][x+1],
+                        image[y+1][x-1], image[y+1][x], image[y+1][x+1]
+                    ];
+                    
+                    const activeNeighbors = neighbors.filter(n => n === 1).length;
+                    if (activeNeighbors >= 2 && activeNeighbors <= 4) {
+                        curvePoints++;
+                    }
+                }
+            }
+        }
+        
+        return curvePoints > 10;
+    }
+    
+    checkSymmetry(image, width, height) {
+        const centerX = Math.floor(width / 2);
+        let symmetricPixels = 0;
+        let totalPixels = 0;
+        
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < centerX; x++) {
+                if (image[y][x] === 1 || image[y][width - 1 - x] === 1) {
+                    totalPixels++;
+                    if (image[y][x] === image[y][width - 1 - x]) {
+                        symmetricPixels++;
+                    }
+                }
+            }
+        }
+        
+        return totalPixels > 0 && (symmetricPixels / totalPixels) > 0.7;
+    }
+    
+    detectGap(image, width, height) {
+        // Look for gaps in the image
+        const centerX = Math.floor(width / 2);
+        const centerY = Math.floor(height / 2);
+        
+        // Check if there's a gap in the center region
+        let gapPixels = 0;
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                const x = centerX + dx;
+                const y = centerY + dy;
+                if (x >= 0 && x < width && y >= 0 && y < height && image[y][x] === 0) {
+                    gapPixels++;
+                }
+            }
+        }
+        
+        return gapPixels > 3;
+    }
+    
+    calculateThickness(image, width, height) {
+        let totalThickness = 0;
+        let measurements = 0;
+        
+        // Sample thickness at various points
+        for (let y = 0; y < height; y += 3) {
+            for (let x = 0; x < width; x += 3) {
+                if (image[y][x] === 1) {
+                    // Measure thickness in both directions
+                    let thicknessX = 0;
+                    let thicknessY = 0;
+                    
+                    // Horizontal thickness
+                    for (let dx = 0; dx < width - x; dx++) {
+                        if (image[y][x + dx] === 1) thicknessX++;
+                        else break;
+                    }
+                    
+                    // Vertical thickness
+                    for (let dy = 0; dy < height - y; dy++) {
+                        if (image[y + dy][x] === 1) thicknessY++;
+                        else break;
+                    }
+                    
+                    totalThickness += Math.max(thicknessX, thicknessY);
+                    measurements++;
+                }
+            }
+        }
+        
+        return measurements > 0 ? totalThickness / measurements : 0;
     }
     
     analyzeImage(imageData) {
@@ -424,20 +875,21 @@ class MLModelHandler {
     }
     
     isSimilarDigit(digit1, digit2) {
-        // Define which digits are similar for fallback mode
-        const similarGroups = [
-            [0, 6, 8, 9], // Round digits
-            [1, 7], // Line-like digits
-            [2, 3, 5], // Curved digits
-            [4] // Unique shape
-        ];
+        // Enhanced similarity detection based on visual characteristics
+        const similarityMatrix = {
+            0: [6, 8, 9], // Circular/loop digits
+            1: [7, 4], // Vertical line digits
+            2: [3, 5, 7], // Curved digits with horizontal elements
+            3: [2, 5, 9], // Curved digits
+            4: [1, 7, 9], // Angular digits
+            5: [2, 3, 6], // Curved digits
+            6: [0, 8, 9, 5], // Loop digits
+            7: [1, 2, 4], // Angular digits
+            8: [0, 6, 9], // Double loop digits
+            9: [0, 3, 6, 8, 4] // Loop digits
+        };
         
-        for (const group of similarGroups) {
-            if (group.includes(digit1) && group.includes(digit2)) {
-                return true;
-            }
-        }
-        return false;
+        return similarityMatrix[digit1] && similarityMatrix[digit1].includes(digit2);
     }
     
     // Method to create a simple model for demonstration
