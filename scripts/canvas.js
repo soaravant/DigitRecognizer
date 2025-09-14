@@ -24,8 +24,8 @@ class CanvasDrawer {
     
     setupCanvas() {
         // Set canvas size and style
-        this.canvas.width = 200;
-        this.canvas.height = 200;
+        this.canvas.width = 400;
+        this.canvas.height = 400;
         
         // Set drawing properties
         this.ctx.lineCap = 'round';

@@ -193,39 +193,39 @@ class DigitRecognizerApp {
     }
 
     setupComparisonToggle() {
-        const compareBtn = document.getElementById('compareModeBtn');
-        if (compareBtn) {
-            compareBtn.addEventListener('click', () => {
-                this.toggleComparisonMode();
+        // Setup tab functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.dataset.tab;
+                
+                // Update active tab button
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update active tab pane
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                const targetPane = document.getElementById(targetTab === 'single' ? 'singleModelView' : 'comparisonView');
+                if (targetPane) {
+                    targetPane.classList.add('active');
+                }
+                
+                // Update comparison mode
+                this.comparisonMode = targetTab === 'compare';
+                
+                // Load models for comparison if needed
+                if (this.comparisonMode) {
+                    this.loadAllModelsForComparison();
+                    if (this.canvasDrawer && this.canvasDrawer.hasDrawing()) {
+                        this.predictWithAllModels();
+                    }
+                }
             });
-        }
+        });
     }
 
-    toggleComparisonMode() {
-        this.comparisonMode = !this.comparisonMode;
-        
-        const singleView = document.getElementById('singleModelView');
-        const comparisonView = document.getElementById('comparisonView');
-        const compareBtn = document.getElementById('compareModeBtn');
-        
-        if (this.comparisonMode) {
-            singleView.style.display = 'none';
-            comparisonView.style.display = 'block';
-            compareBtn.textContent = 'Single Model View';
-            
-            // Load all models for comparison
-            this.loadAllModelsForComparison();
-            
-            // If there's a drawing, make predictions with all models
-            if (this.canvasDrawer && this.canvasDrawer.hasDrawing()) {
-                this.predictWithAllModels();
-            }
-        } else {
-            singleView.style.display = 'block';
-            comparisonView.style.display = 'none';
-            compareBtn.textContent = 'Compare All Models';
-        }
-    }
 
     async loadAllModelsForComparison() {
         try {

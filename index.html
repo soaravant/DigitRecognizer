@@ -30,7 +30,7 @@
 
             <div class="canvas-container">
                 <div class="canvas-wrapper">
-                    <canvas id="drawingCanvas" width="200" height="200"></canvas>
+                        <canvas id="drawingCanvas" width="400" height="400"></canvas>
                     <div class="canvas-overlay" id="canvasOverlay">
                         <div class="loading-spinner" id="loadingSpinner">
                             <div class="spinner"></div>
@@ -48,16 +48,18 @@
                 </div>
             </div>
 
-            <div class="prediction-container">
-                <div class="prediction-header">
-                    <h2>Model Predictions</h2>
-                    <div class="comparison-toggle">
-                        <button id="compareModeBtn" class="btn btn-secondary">Compare All Models</button>
+                <div class="prediction-container">
+                    <div class="prediction-header">
+                        <h2>Model Predictions</h2>
+                        <div class="tab-navigation">
+                            <button class="tab-button active" data-tab="single">Single Model</button>
+                            <button class="tab-button" data-tab="compare">Compare All</button>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Single Model View -->
-                <div class="single-model-view" id="singleModelView">
+
+                    <div class="tab-content">
+                        <!-- Single Model View -->
+                        <div class="tab-pane active" id="singleModelView">
                     <div class="model-prediction-header">
                         <h3 id="currentModelName">Select a Model</h3>
                         <div class="confidence-indicator" id="confidenceIndicator">
@@ -106,14 +108,15 @@
                     </div>
                 </div>
 
-                <!-- Comparison View -->
-                <div class="comparison-view" id="comparisonView" style="display: none;">
-                    <h3>All Models Comparison</h3>
-                    <div class="models-comparison" id="modelsComparison">
-                        <!-- Model predictions will be loaded here -->
+                        <!-- Comparison View -->
+                        <div class="tab-pane" id="comparisonView">
+                            <h3>All Models Comparison</h3>
+                            <div class="models-comparison" id="modelsComparison">
+                                <!-- Model predictions will be loaded here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
         </main>
 
         <div class="instructions">
