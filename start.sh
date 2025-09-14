@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# DigitRecognizer Launch Script
-echo "🚀 Starting DigitRecognizer Web Application..."
+# Numberly Launch Script
+echo "🚀 Starting Numberly Web Application..."
 
 # Check if Python is available
 if command -v python3 &> /dev/null; then

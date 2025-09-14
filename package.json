@@ -1,5 +1,5 @@
 {
-  "name": "digit-recognizer",
+  "name": "numberly",
   "version": "1.0.0",
   "description": "Handwritten digit recognition using machine learning with interactive canvas",
   "main": "index.html",
@@ -30,10 +30,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/DigitRecognizer.git"
+    "url": "https://github.com/soaravant/Numberly.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/DigitRecognizer/issues"
+    "url": "https://github.com/soaravant/Numberly/issues"
   },
-  "homepage": "https://github.com/yourusername/DigitRecognizer#readme"
+    "homepage": "https://github.com/soaravant/Numberly#readme"
 }
