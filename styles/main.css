@@ -45,10 +45,19 @@ body {
 /* Main Content Layout */
 .main-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 300px 1fr 400px;
     gap: 30px;
     flex: 1;
     align-items: start;
+}
+
+/* Model Selector Container */
+.model-selector-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    height: fit-content;
 }
 
 /* Canvas Container */
@@ -58,15 +67,18 @@ body {
     padding: 30px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Model Selector */
 .model-selector {
-    margin-bottom: 25px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 15px;
-    border: 2px solid #e9ecef;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
 }
 
 .model-selector h3 {
@@ -78,8 +90,8 @@ body {
 
 .model-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 8px;
     margin-bottom: 15px;
 }
 
@@ -87,10 +99,13 @@ body {
     background: white;
     border: 2px solid #e9ecef;
     border-radius: 10px;
-    padding: 12px;
+    padding: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-align: center;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .model-card:hover {
@@ -107,7 +122,7 @@ body {
 
 .model-card h4 {
     font-size: 0.9rem;
-    margin: 0 0 5px 0;
+    margin: 0;
     font-weight: 600;
 }
 
@@ -557,6 +572,26 @@ body {
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .model-selector-container {
+        order: 2;
+    }
+    
+    .canvas-container {
+        order: 1;
+    }
+    
+    .prediction-container {
+        order: 3;
+        grid-column: 1 / -1;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 15px;
@@ -575,9 +610,18 @@ body {
         gap: 20px;
     }
     
+    .model-selector-container,
     .canvas-container,
     .prediction-container {
         padding: 20px;
+    }
+    
+    .model-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    
+    .model-card {
+        text-align: center;
     }
     
     .prediction-header {
