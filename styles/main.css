@@ -14,8 +14,8 @@ body {
 }
 
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
     padding: 20px;
     min-height: 100vh;
     display: flex;
@@ -45,32 +45,35 @@ body {
 /* Main Content Layout */
 .main-content {
     display: grid;
-    grid-template-columns: 300px 1fr 400px;
-    gap: 30px;
+    grid-template-columns: 280px 1fr 350px;
+    gap: 20px;
     flex: 1;
     align-items: start;
+    height: calc(100vh - 200px);
 }
 
 /* Model Selector Container */
 .model-selector-container {
     background: white;
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    height: fit-content;
+    height: 100%;
+    overflow-y: auto;
 }
 
 /* Canvas Container */
 .canvas-container {
     background: white;
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    height: 100%;
 }
 
 /* Model Selector */
@@ -306,8 +309,10 @@ body {
 .prediction-container {
     background: white;
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    overflow-y: auto;
 }
 
 /* Comparison Toggle */
@@ -574,27 +579,48 @@ body {
 /* Responsive Design */
 @media (max-width: 1200px) {
     .main-content {
+        grid-template-columns: 250px 1fr 300px;
+        gap: 15px;
+        height: calc(100vh - 180px);
+    }
+    
+    .model-selector-container,
+    .prediction-container {
+        padding: 15px;
+    }
+    
+    .canvas-container {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .main-content {
         grid-template-columns: 1fr 1fr;
-        gap: 20px;
+        gap: 15px;
+        height: auto;
     }
     
     .model-selector-container {
         order: 2;
+        height: auto;
     }
     
     .canvas-container {
         order: 1;
+        height: auto;
     }
     
     .prediction-container {
         order: 3;
         grid-column: 1 / -1;
+        height: auto;
     }
 }
 
 @media (max-width: 768px) {
     .container {
-        padding: 15px;
+        padding: 10px;
     }
     
     .title {
@@ -607,13 +633,15 @@ body {
     
     .main-content {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 15px;
+        height: auto;
     }
     
     .model-selector-container,
     .canvas-container,
     .prediction-container {
-        padding: 20px;
+        padding: 15px;
+        height: auto;
     }
     
     .model-grid {
