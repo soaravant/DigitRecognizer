@@ -1,0 +1,86 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-14T17:53:05.341750",
+  "models": {
+    "model_1": {
+      "name": "Simple CNN",
+      "description": "Basic convolutional network with 2 conv layers",
+      "parameters": "~1.2M",
+      "accuracy": "98.5%",
+      "path": "models/model_1_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_2": {
+      "name": "Deep CNN",
+      "description": "Deep network with batch normalization and dropout",
+      "parameters": "~2.8M",
+      "accuracy": "99.2%",
+      "path": "models/model_2_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_3": {
+      "name": "ResNet-like",
+      "description": "Residual connections for better gradient flow",
+      "parameters": "~1.5M",
+      "accuracy": "99.1%",
+      "path": "models/model_3_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_4": {
+      "name": "DenseNet-like",
+      "description": "Dense connections between layers",
+      "parameters": "~1.8M",
+      "accuracy": "99.0%",
+      "path": "models/model_4_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_5": {
+      "name": "Wide CNN",
+      "description": "More filters per layer for wider representation",
+      "parameters": "~3.2M",
+      "accuracy": "99.3%",
+      "path": "models/model_5_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_6": {
+      "name": "MobileNet-like",
+      "description": "Depthwise separable convolutions for efficiency",
+      "parameters": "~0.8M",
+      "accuracy": "98.8%",
+      "path": "models/model_6_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_7": {
+      "name": "Attention CNN",
+      "description": "Self-attention mechanism for focus",
+      "parameters": "~1.6M",
+      "accuracy": "99.1%",
+      "path": "models/model_7_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_8": {
+      "name": "Ensemble CNN",
+      "description": "Multiple parallel branches with different filters",
+      "parameters": "~1.4M",
+      "accuracy": "99.0%",
+      "path": "models/model_8_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_9": {
+      "name": "Transformer CNN",
+      "description": "CNN with transformer-like attention",
+      "parameters": "~2.1M",
+      "accuracy": "99.2%",
+      "path": "models/model_9_tfjs/model.json",
+      "status": "missing"
+    },
+    "model_10": {
+      "name": "Lightweight CNN",
+      "description": "Optimized for speed and small size",
+      "parameters": "~0.3M",
+      "accuracy": "98.0%",
+      "path": "models/model_10_tfjs/model.json",
+      "status": "missing"
+    }
+  }
+}

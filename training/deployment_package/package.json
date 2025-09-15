@@ -1,0 +1,40 @@
+{
+  "name": "numberly",
+  "version": "1.0.0",
+  "description": "Handwritten digit recognition using machine learning with interactive canvas",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "python3 simple_dev_server.py",
+    "dev-live": "npx live-server --port=8000 --open=/index.html",
+    "build": "echo 'Static site - no build needed'",
+    "deploy": "vercel --prod",
+    "train": "cd training && python train_model.py",
+    "convert": "cd training && python convert_model.py",
+    "train-all": "cd training && python models_10.py"
+  },
+  "keywords": [
+    "machine-learning",
+    "tensorflow",
+    "digit-recognition",
+    "canvas",
+    "javascript",
+    "ai",
+    "mnist"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soaravant/Numberly.git"
+  },
+  "bugs": {
+    "url": "https://github.com/soaravant/Numberly/issues"
+  },
+    "homepage": "https://github.com/soaravant/Numberly#readme"
+}

@@ -1,0 +1,88 @@
+{
+  "version": "1.0.0",
+  "type": "demo",
+  "created": "2024-01-01T00:00:00Z",
+  "description": "Demo models created for immediate testing",
+  "models": {
+    "model_1": {
+      "name": "Simple CNN",
+      "description": "Basic convolutional network with 2 conv layers",
+      "path": "models/model_1_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_2": {
+      "name": "Deep CNN",
+      "description": "Deep network with batch normalization and dropout",
+      "path": "models/model_2_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_3": {
+      "name": "ResNet-like",
+      "description": "Residual connections for better gradient flow",
+      "path": "models/model_3_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_4": {
+      "name": "DenseNet-like",
+      "description": "Dense connections between layers",
+      "path": "models/model_4_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_5": {
+      "name": "Wide CNN",
+      "description": "More filters per layer for wider representation",
+      "path": "models/model_5_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_6": {
+      "name": "MobileNet-like",
+      "description": "Depthwise separable convolutions for efficiency",
+      "path": "models/model_6_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_7": {
+      "name": "Attention CNN",
+      "description": "Self-attention mechanism for focus",
+      "path": "models/model_7_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_8": {
+      "name": "Ensemble CNN",
+      "description": "Multiple parallel branches with different filters",
+      "path": "models/model_8_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_9": {
+      "name": "Transformer CNN",
+      "description": "CNN with transformer-like attention",
+      "path": "models/model_9_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    },
+    "model_10": {
+      "name": "Lightweight CNN",
+      "description": "Optimized for speed and small size",
+      "path": "models/model_10_tfjs/model.json",
+      "status": "created",
+      "parameters": "~0.1M",
+      "accuracy": "Demo Mode"
+    }
+  }
+}

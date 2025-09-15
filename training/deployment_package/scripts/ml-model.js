@@ -141,9 +141,9 @@ class MLModelHandler {
             const model = await tf.loadLayersModel(config.path);
             
             // Warm up the model with a dummy prediction
-            const ishape = model.inputs && model.inputs[0] && model.inputs[0].shape ? model.inputs[0].shape : [null, 50, 50, 1];
-            const warmH = ishape[1] || 50;
-            const warmW = ishape[2] || 50;
+            const ishape = model.inputs && model.inputs[0] && model.inputs[0].shape ? model.inputs[0].shape : [null, 28, 28, 1];
+            const warmH = ishape[1] || 28;
+            const warmW = ishape[2] || 28;
             const dummyInput = tf.zeros([1, warmH, warmW, 1]);
             await model.predict(dummyInput);
             dummyInput.dispose();
@@ -251,9 +251,9 @@ class MLModelHandler {
                 }
 
                 const input = tf.tensor4d(data, [1, height, width, 1]);
-                const ishape = model.inputs && model.inputs[0] && model.inputs[0].shape ? model.inputs[0].shape : [null, 50, 50, 1];
-                const targetH = ishape[1] || 50;
-                const targetW = ishape[2] || 50;
+                const ishape = model.inputs && model.inputs[0] && model.inputs[0].shape ? model.inputs[0].shape : [null, 28, 28, 1];
+                const targetH = ishape[1] || 28;
+                const targetW = ishape[2] || 28;
                 if (height !== targetH || width !== targetW) {
                     const resized = tf.image.resizeBilinear(input, [targetH, targetW], true);
                     return { tensor: resized };
@@ -363,7 +363,7 @@ class MLModelHandler {
     
     advancedImageAnalysis(imageData) {
         // Convert image data to 2D array for analysis (dynamic size)
-        let width = 50, height = 50, src;
+        let width = 28, height = 28, src;
         if (Array.isArray(imageData) || imageData instanceof Float32Array) {
             src = imageData;
         } else if (imageData && imageData.data) {
@@ -845,7 +845,7 @@ class MLModelHandler {
     
     analyzeImage(imageData) {
         // Simple image analysis for fallback mode (dynamic size)
-        let width = 50, height = 50, src;
+        let width = 28, height = 28, src;
         if (Array.isArray(imageData) || imageData instanceof Float32Array) {
             src = imageData;
         } else if (imageData && imageData.data) {
@@ -945,7 +945,7 @@ class MLModelHandler {
         // Create a simple sequential model
         const model = tf.sequential({
             layers: [
-                tf.layers.flatten({ inputShape: [50, 50, 1] }),
+                tf.layers.flatten({ inputShape: [28, 28, 1] }),
                 tf.layers.dense({ units: 128, activation: 'relu' }),
                 tf.layers.dropout({ rate: 0.2 }),
                 tf.layers.dense({ units: 64, activation: 'relu' }),

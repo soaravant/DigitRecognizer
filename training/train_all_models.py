@@ -96,7 +96,15 @@ def train_models(epochs=15, batch_size=128, quick_mode=False):
 
 def convert_all_models():
     """Convert all trained models to TensorFlow.js format"""
-    import tensorflowjs as tfjs
+    try:
+        import tensorflowjs as tfjs
+    except Exception as e:
+        print("\n⚠️  TensorFlow.js import failed during conversion. Skipping TFJS conversion.")
+        print("Reason:", e)
+        print("\nTo enable conversion, install compatible JAX packages then rerun conversion:")
+        print("  pip install 'jax[cpu]==0.4.13' 'jaxlib==0.4.13'")
+        print("Or pin a TFJS version that doesn't require JAX:  pip install tensorflowjs==3.21.0")
+        return
     
     model_files = [
         'model_1.h5', 'model_2.h5', 'model_3.h5', 'model_4.h5', 'model_5.h5',
@@ -208,7 +216,8 @@ def test_models():
     import tensorflow as tf
     import numpy as np
     
-    test_image = np.random.random((1, 28, 28, 1)).astype('float32')
+    # Use 50x50 to match retrained models
+    test_image = np.random.random((1, 50, 50, 1)).astype('float32')
     
     for i in range(1, 11):
         model_path = f'models/model_{i}.h5'

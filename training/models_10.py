@@ -23,6 +23,7 @@ class ModelTrainer:
         self.x_test = None
         self.y_train = None
         self.y_test = None
+        self.image_size = 50
         
     def load_data(self):
         """Load and preprocess MNIST dataset"""
@@ -38,6 +39,10 @@ class ModelTrainer:
         self.x_train = self.x_train.reshape(-1, 28, 28, 1)
         self.x_test = self.x_test.reshape(-1, 28, 28, 1)
         
+        # Resize to 50x50 to match app input
+        self.x_train = tf.image.resize(self.x_train, [self.image_size, self.image_size], method='bilinear').numpy()
+        self.x_test = tf.image.resize(self.x_test, [self.image_size, self.image_size], method='bilinear').numpy()
+        
         # Convert labels to categorical
         self.y_train = to_categorical(self.y_train, 10)
         self.y_test = to_categorical(self.y_test, 10)
@@ -48,7 +53,7 @@ class ModelTrainer:
     def create_model_1_simple_cnn(self):
         """Model 1: Simple CNN - Basic convolutional network"""
         model = models.Sequential([
-            layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+            layers.Conv2D(32, (3, 3), activation='relu', input_shape=(self.image_size, self.image_size, 1)),
             layers.MaxPooling2D((2, 2)),
             layers.Conv2D(64, (3, 3), activation='relu'),
             layers.MaxPooling2D((2, 2)),
@@ -61,7 +66,7 @@ class ModelTrainer:
     def create_model_2_deep_cnn(self):
         """Model 2: Deep CNN - More layers with batch normalization"""
         model = models.Sequential([
-            layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+            layers.Conv2D(32, (3, 3), activation='relu', input_shape=(self.image_size, self.image_size, 1)),
             layers.BatchNormalization(),
             layers.Conv2D(32, (3, 3), activation='relu'),
             layers.MaxPooling2D((2, 2)),
@@ -89,7 +94,7 @@ class ModelTrainer:
     
     def create_model_3_resnet_like(self):
         """Model 3: ResNet-like - Residual connections"""
-        inputs = layers.Input(shape=(28, 28, 1))
+        inputs = layers.Input(shape=(self.image_size, self.image_size, 1))
         
         # Initial convolution
         x = layers.Conv2D(32, (3, 3), padding='same')(inputs)
@@ -129,7 +134,7 @@ class ModelTrainer:
     
     def create_model_4_dense_net(self):
         """Model 4: DenseNet-like - Dense connections"""
-        inputs = layers.Input(shape=(28, 28, 1))
+        inputs = layers.Input(shape=(self.image_size, self.image_size, 1))
         
         # Initial convolution
         x = layers.Conv2D(32, (3, 3), padding='same')(inputs)
@@ -171,7 +176,7 @@ class ModelTrainer:
     def create_model_5_wide_cnn(self):
         """Model 5: Wide CNN - More filters per layer"""
         model = models.Sequential([
-            layers.Conv2D(64, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+            layers.Conv2D(64, (3, 3), activation='relu', input_shape=(self.image_size, self.image_size, 1)),
             layers.Conv2D(64, (3, 3), activation='relu'),
             layers.MaxPooling2D((2, 2)),
             
@@ -191,7 +196,7 @@ class ModelTrainer:
     
     def create_model_6_mobile_net(self):
         """Model 6: MobileNet-like - Depthwise separable convolutions"""
-        inputs = layers.Input(shape=(28, 28, 1))
+        inputs = layers.Input(shape=(self.image_size, self.image_size, 1))
         
         # Depthwise separable convolution
         x = layers.DepthwiseConv2D((3, 3), padding='same')(inputs)
@@ -223,7 +228,7 @@ class ModelTrainer:
     
     def create_model_7_attention_cnn(self):
         """Model 7: CNN with Attention - Self-attention mechanism"""
-        inputs = layers.Input(shape=(28, 28, 1))
+        inputs = layers.Input(shape=(self.image_size, self.image_size, 1))
         
         # Feature extraction
         x = layers.Conv2D(32, (3, 3), activation='relu', padding='same')(inputs)
@@ -250,7 +255,7 @@ class ModelTrainer:
     
     def create_model_8_ensemble_cnn(self):
         """Model 8: Ensemble CNN - Multiple parallel branches"""
-        inputs = layers.Input(shape=(28, 28, 1))
+        inputs = layers.Input(shape=(self.image_size, self.image_size, 1))
         
         # Branch 1: Small filters
         branch1 = layers.Conv2D(32, (3, 3), activation='relu', padding='same')(inputs)
@@ -280,7 +285,7 @@ class ModelTrainer:
     
     def create_model_9_transformer_cnn(self):
         """Model 9: CNN with Transformer-like attention"""
-        inputs = layers.Input(shape=(28, 28, 1))
+        inputs = layers.Input(shape=(self.image_size, self.image_size, 1))
         
         # CNN feature extraction
         x = layers.Conv2D(64, (3, 3), activation='relu', padding='same')(inputs)
@@ -311,7 +316,7 @@ class ModelTrainer:
     def create_model_10_lightweight_cnn(self):
         """Model 10: Lightweight CNN - Optimized for speed"""
         model = models.Sequential([
-            layers.Conv2D(16, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+            layers.Conv2D(16, (3, 3), activation='relu', input_shape=(self.image_size, self.image_size, 1)),
             layers.MaxPooling2D((2, 2)),
             
             layers.Conv2D(32, (3, 3), activation='relu'),

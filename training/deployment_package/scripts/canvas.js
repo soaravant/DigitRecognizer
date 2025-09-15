@@ -223,7 +223,7 @@ class CanvasDrawer {
         const cropW = isFinite(srcW) && srcW > 0 ? srcW : this.canvas.width;
         const cropH = isFinite(srcH) && srcH > 0 ? srcH : this.canvas.height;
 
-        const TARGET = 50;
+        const TARGET = 200;
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
         tempCanvas.width = TARGET;
