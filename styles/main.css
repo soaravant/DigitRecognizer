@@ -293,6 +293,10 @@ body::before {
     color: var(--muted);
 }
 
+.model-info:empty {
+    display: none;
+}
+
 .model-info h4 {
     color: var(--text);
     margin: 0 0 8px 0;
@@ -363,14 +367,14 @@ body::before {
     height: 400px;
     box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.5);
     position: relative;
-    animation: canvasGlow 4s ease-in-out infinite alternate;
+    animation: canvasGlow 3s ease-in-out infinite;
 }
 
 #drawingCanvas:hover {
     border-color: var(--accent);
     box-shadow: var(--shadow-xl), 0 0 30px var(--accent-glow), inset 0 0 20px rgba(0, 0, 0, 0.5);
     transform: scale(1.02);
-    animation: canvasGlowHover 2s ease-in-out infinite alternate;
+    animation: canvasGlowHover 2s ease-in-out infinite;
 }
 
 #drawingCanvas:active {
@@ -379,19 +383,25 @@ body::before {
 
 @keyframes canvasGlow {
     0% { 
-        box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-glow);
+        box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-glow), 0 0 60px rgba(59, 130, 246, 0.2);
+    }
+    50% { 
+        box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 50px var(--accent-glow-strong), 0 0 100px rgba(59, 130, 246, 0.4);
     }
     100% { 
-        box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px var(--accent-glow-strong);
+        box-shadow: var(--shadow-lg), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-glow), 0 0 60px rgba(59, 130, 246, 0.2);
     }
 }
 
 @keyframes canvasGlowHover {
     0% { 
-        box-shadow: var(--shadow-xl), 0 0 30px var(--accent-glow), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 50px var(--accent-glow-strong);
+        box-shadow: var(--shadow-xl), 0 0 40px var(--accent-glow), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 80px var(--accent-glow-strong), 0 0 120px rgba(59, 130, 246, 0.3);
+    }
+    50% { 
+        box-shadow: var(--shadow-xl), 0 0 60px var(--accent-glow-strong), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 100px var(--accent-glow-intense), 0 0 160px rgba(59, 130, 246, 0.5);
     }
     100% { 
-        box-shadow: var(--shadow-xl), 0 0 30px var(--accent-glow), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 80px var(--accent-glow-intense);
+        box-shadow: var(--shadow-xl), 0 0 40px var(--accent-glow), inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 80px var(--accent-glow-strong), 0 0 120px rgba(59, 130, 246, 0.3);
     }
 }
 
@@ -626,6 +636,10 @@ body::before {
     font-size: 1.2rem;
     font-weight: 600;
     margin: 0;
+}
+
+.model-prediction-header h3:empty {
+    display: none;
 }
 
 /* Comparison View */

@@ -197,6 +197,8 @@ class DigitRecognizerApp {
         if (currentModelName && this.currentModelId) {
             const config = this.mlModelHandler.getAvailableModels()[this.currentModelId];
             currentModelName.textContent = config.name;
+        } else if (currentModelName) {
+            currentModelName.textContent = '';
         }
     }
 
