@@ -188,9 +188,7 @@ class DigitRecognizerApp {
                 <p><strong>Accuracy:</strong> ${config.accuracy}</p>
             `;
         } else {
-            modelInfo.innerHTML = `
-                <p>Select a model to see its details and start predicting</p>
-            `;
+            modelInfo.innerHTML = ``;
         }
     }
 
@@ -396,13 +394,13 @@ class DigitRecognizerApp {
                             probabilityFill.style.width = `${percentage}%`;
                         }, 100);
                         
-                        // Enhanced color gradients per rank
+                        // Enhanced blue color gradients per rank
                         if (index === 0) {
-                            probabilityFill.style.background = 'linear-gradient(90deg, #10b981 0%, #34d399 100%)';
+                            probabilityFill.style.background = 'linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #60a5fa 100%)';
                         } else if (index === 1) {
-                            probabilityFill.style.background = 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)';
+                            probabilityFill.style.background = 'linear-gradient(90deg, #1d4ed8 0%, #3b82f6 50%, #1e40af 100%)';
                         } else if (index === 2) {
-                            probabilityFill.style.background = 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)';
+                            probabilityFill.style.background = 'linear-gradient(90deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%)';
                         }
                         
                         // Add staggered animations
@@ -431,16 +429,16 @@ class DigitRecognizerApp {
             
             confidenceText.textContent = `${percentage}%`;
             
-            // Enhanced gradient colors based on confidence
+            // Enhanced blue gradient colors based on confidence
             if (confidence > 0.8) {
-                confidenceFill.style.background = 'linear-gradient(90deg, #10b981 0%, #34d399 100%)';
-                confidenceFill.style.boxShadow = '0 0 15px var(--success-glow)';
+                confidenceFill.style.background = 'linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #60a5fa 100%)';
+                confidenceFill.style.boxShadow = '0 0 15px var(--accent-glow-strong)';
             } else if (confidence > 0.5) {
-                confidenceFill.style.background = 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)';
-                confidenceFill.style.boxShadow = '0 0 15px var(--warning-glow)';
+                confidenceFill.style.background = 'linear-gradient(90deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%)';
+                confidenceFill.style.boxShadow = '0 0 15px var(--accent-glow)';
             } else {
-                confidenceFill.style.background = 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)';
-                confidenceFill.style.boxShadow = '0 0 15px var(--danger-glow)';
+                confidenceFill.style.background = 'linear-gradient(90deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%)';
+                confidenceFill.style.boxShadow = '0 0 15px var(--accent-glow)';
             }
             
             // Add pulse animation for high confidence
