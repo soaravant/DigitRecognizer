@@ -285,9 +285,9 @@ class MLModelHandler {
         const results = {};
         
         if (this.fallbackMode) {
-            // For fallback mode, return the same prediction for all models
-            const fallbackResult = this.fallbackPrediction(imageData);
+            // For fallback mode, generate independent predictions per model
             for (const modelId of Object.keys(this.modelConfigs)) {
+                const fallbackResult = this.fallbackPrediction(imageData);
                 results[modelId] = {
                     ...fallbackResult,
                     modelId,

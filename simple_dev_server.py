@@ -53,7 +53,7 @@ class AutoReloadHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             .then(response => response.json())
             .then(data => {
                 if (data.reload) {
-                    console.log('🔄 Auto-reloading...');
+                    console.log('Auto-reloading...');
                     window.location.reload();
                 }
             })
@@ -65,7 +65,7 @@ class AutoReloadHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     // Start checking for reloads
     setInterval(checkForReload, checkInterval);
     
-    console.log('🔄 Auto-reload enabled - checking every 2 seconds');
+    console.log('Auto-reload enabled - checking every 2 seconds');
 })();
 </script>
 '''

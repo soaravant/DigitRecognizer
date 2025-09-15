@@ -14,6 +14,10 @@ import subprocess
 
 # Add the training directory to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Ensure repository root (for local stubs like `jax`) is importable
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
 
 from models_10 import ModelTrainer
 
@@ -97,33 +101,38 @@ def train_models(epochs=15, batch_size=128, quick_mode=False):
 def convert_all_models():
     """Convert all trained models to TensorFlow.js format"""
     try:
+        import tensorflow as tf
         import tensorflowjs as tfjs
     except Exception as e:
-        print("\n⚠️  TensorFlow.js import failed during conversion. Skipping TFJS conversion.")
+        print("\n⚠️  TensorFlow.js conversion unavailable. Skipping TFJS conversion.")
         print("Reason:", e)
-        print("\nTo enable conversion, install compatible JAX packages then rerun conversion:")
-        print("  pip install 'jax[cpu]==0.4.13' 'jaxlib==0.4.13'")
-        print("Or pin a TFJS version that doesn't require JAX:  pip install tensorflowjs==3.21.0")
+        print("\nTo enable conversion, install a compatible tensorflowjs version (no JAX required):")
+        print("  pip install tensorflowjs==3.21.0")
         return
-    
+
     model_files = [
         'model_1.h5', 'model_2.h5', 'model_3.h5', 'model_4.h5', 'model_5.h5',
         'model_6.h5', 'model_7.h5', 'model_8.h5', 'model_9.h5', 'model_10.h5'
     ]
-    
+
     for i, model_file in enumerate(model_files, 1):
         model_path = f'models/{model_file}'
         tfjs_path = f'models/model_{i}_tfjs'
-        
-        if os.path.exists(model_path):
-            try:
-                print(f"Converting {model_file} to TensorFlow.js...")
-                tfjs.converters.save_keras_model(model_path, tfjs_path)
-                print(f"✓ Converted to {tfjs_path}")
-            except Exception as e:
-                print(f"✗ Failed to convert {model_file}: {e}")
-        else:
+
+        if not os.path.exists(model_path):
             print(f"✗ Model file not found: {model_path}")
+            continue
+
+        os.makedirs(tfjs_path, exist_ok=True)
+
+        try:
+            print(f"Converting {model_file} to TensorFlow.js...")
+            # Load the Keras model then convert
+            model = tf.keras.models.load_model(model_path)
+            tfjs.converters.save_keras_model(model, tfjs_path)
+            print(f"✓ Converted to {tfjs_path}")
+        except Exception as e:
+            print(f"✗ Failed to convert {model_file}: {e}")
 
 def create_model_manifest():
     """Create a manifest file with all model information"""

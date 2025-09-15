@@ -66,7 +66,7 @@ class DigitRecognizerApp {
     async waitForComponents() {
         // Wait for canvas and ML model to be ready
         let attempts = 0;
-        const maxAttempts = 50; // 5 seconds max wait
+        const maxAttempts = 150; // 15 seconds max wait to avoid premature fallback
         
         while (attempts < maxAttempts) {
             if (window.canvasDrawer && window.mlModelHandler) {
@@ -281,7 +281,7 @@ class DigitRecognizerApp {
                 await this.predictWithAllModels();
             } else {
                 // Make prediction with current model
-                const result = await this.mlModelHandler.predict(imageData);
+                const result = await this.mlModelHandler.predict(processed);
                 
                 // Update UI with results
                 this.updatePredictionUI(result);
