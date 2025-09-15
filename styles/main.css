@@ -185,13 +185,14 @@ body::before {
     padding: 20px;
     text-align: center;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     height: 100%;
     border-right: 1px solid var(--border);
     transition: all 0.3s var(--easing);
     box-shadow: var(--shadow-md);
+    gap: 30px;
 }
 
 /* Model Selector */
@@ -310,7 +311,6 @@ body::before {
 .canvas-wrapper {
     position: relative;
     display: inline-block;
-    margin-bottom: 20px;
     padding: 20px;
     border-radius: 24px;
     background: 
@@ -464,12 +464,25 @@ body::before {
 .canvas-controls {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    align-items: center;
+    gap: 20px;
+    align-items: flex-start;
+    min-width: 200px;
 }
 
-.preprocess-preview { display: flex; align-items: center; gap: 10px; color: var(--muted); }
-.preprocess-preview canvas { border: 1px solid var(--border); border-radius: 8px; background: #000; }
+.preprocess-preview { 
+    display: flex; 
+    flex-direction: column;
+    align-items: flex-start; 
+    gap: 10px; 
+    color: var(--muted); 
+    width: 100%;
+}
+.preprocess-preview canvas { 
+    border: 1px solid var(--border); 
+    border-radius: 8px; 
+    background: #000; 
+    align-self: center;
+}
 
 .btn {
     padding: 12px 20px;
@@ -541,6 +554,7 @@ body::before {
     align-items: center;
     gap: 10px;
     font-weight: 500;
+    width: 100%;
 }
 
 #brushSize {
@@ -1060,6 +1074,8 @@ body::before {
     
     .canvas-container {
         order: 1;
+        flex-direction: column;
+        gap: 20px;
     }
     
     .prediction-container {
@@ -1070,6 +1086,11 @@ body::before {
     #drawingCanvas {
         width: 300px;
         height: 300px;
+    }
+    
+    .canvas-controls {
+        align-items: center;
+        min-width: auto;
     }
 }
 
@@ -1126,9 +1147,9 @@ body::before {
     }
     
     .canvas-controls {
-        flex-direction: row;
-        justify-content: center;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
     }
     
     #drawingCanvas {
