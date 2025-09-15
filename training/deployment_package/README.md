@@ -1,4 +1,4 @@
-# Numberly - Handwritten Digit Recognition Web App
+# Numberly - AI-Powered Number Recognition Web App
 
 A modern web application that uses machine learning to recognize handwritten digits in real-time. Draw numbers on a 200x200px canvas and watch AI predict them instantly using TensorFlow.js with 10 different model architectures for comparison.
 
@@ -37,7 +37,7 @@ DigitRecognizer/
 │   ├── ml-model.js           # TensorFlow.js model handling
 │   └── app.js                # Main application logic
 ├── models/
-│   └── digit-recognizer.json # Pre-trained model (TensorFlow.js format)
+│   └── numberly-model.json # Pre-trained model (TensorFlow.js format)
 ├── training/
 │   ├── train_model.py        # Python script to train the model
 │   ├── convert_model.py      # Script to convert model to TensorFlow.js
@@ -106,7 +106,7 @@ The development server will:
 
 3. **Convert to TensorFlow.js format**
    ```bash
-   python convert_model.py --input models/digit_recognizer_model.h5 --output ../models/digit-recognizer
+   python convert_model.py --input models/numberly_model.h5 --output ../models/numberly-model
    ```
 
 4. **Run the web app**

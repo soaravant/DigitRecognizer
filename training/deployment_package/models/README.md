@@ -5,7 +5,7 @@ This directory contains the machine learning models for the DigitRecognizer appl
 ## Files
 
 - `demo-model.json` - Demo model topology (for testing without training)
-- `digit-recognizer.json` - Main trained model (created after training)
+- `numberly-model.json` - Main trained model (created after training)
 - `*.weights.bin` - Model weight files (binary format)
 
 ## Getting Started
