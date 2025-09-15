@@ -670,14 +670,14 @@ body::before {
 
 .models-comparison {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
 }
 
 .model-comparison-card {
     background: var(--surface-2);
-    border-radius: 16px;
-    padding: 18px;
+    border-radius: 12px;
+    padding: 12px;
     border: 1px solid var(--border);
     transition: all 0.3s var(--easing);
     box-shadow: var(--shadow-sm);
@@ -708,8 +708,8 @@ body::before {
 
 .model-comparison-card h4 {
     color: var(--text);
-    font-size: 1rem;
-    margin: 0 0 10px 0;
+    font-size: 0.85rem;
+    margin: 0 0 8px 0;
     font-weight: 600;
     text-align: center;
 }
@@ -720,27 +720,27 @@ body::before {
 }
 
 .model-comparison-prediction .digit {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--accent);
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .model-comparison-prediction .confidence {
-    font-size: 1rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--text);
 }
 
 .model-comparison-stats {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: var(--muted);
     text-align: center;
 }
 
 .model-comparison-stats .stat {
-    margin: 2px 0;
+    margin: 1px 0;
 }
 
 .prediction-header {
@@ -1168,6 +1168,19 @@ body::before {
     .instructions li {
         font-size: 0.9rem;
     }
+    
+    .models-comparison {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .model-comparison-card {
+        padding: 10px;
+    }
+    
+    .model-comparison-prediction .digit {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1193,6 +1206,23 @@ body::before {
     
     .prediction-row .digit {
         font-size: 1.2rem;
+    }
+    
+    .models-comparison {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .model-comparison-card {
+        padding: 8px;
+    }
+    
+    .model-comparison-prediction .digit {
+        font-size: 1.3rem;
+    }
+    
+    .model-comparison-card h4 {
+        font-size: 0.8rem;
     }
 }
 
