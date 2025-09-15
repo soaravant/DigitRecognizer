@@ -1,7 +1,7 @@
 {
   "name": "numberly",
   "version": "1.0.0",
-  "description": "Handwritten digit recognition using machine learning with interactive canvas",
+  "description": "AI-powered number recognition using machine learning with interactive canvas",
   "main": "index.html",
   "scripts": {
     "start": "python3 -m http.server 8000",

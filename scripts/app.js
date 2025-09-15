@@ -354,12 +354,23 @@ class DigitRecognizerApp {
         const probabilityElement = document.querySelector('.prediction-item .probability');
         
         if (digitElement && probabilityElement) {
-            digitElement.textContent = prediction.digit;
-            probabilityElement.textContent = `${(confidence * 100).toFixed(1)}%`;
+            // Add scale animation before updating
+            digitElement.style.transform = 'scale(0.8)';
+            digitElement.style.opacity = '0.5';
             
-            // Add animation
-            digitElement.classList.add('fade-in');
-            setTimeout(() => digitElement.classList.remove('fade-in'), 500);
+            setTimeout(() => {
+                digitElement.textContent = prediction.digit;
+                probabilityElement.textContent = `${(confidence * 100).toFixed(1)}%`;
+                
+                // Add enhanced animations
+                digitElement.classList.add('scale-in');
+                digitElement.style.transform = 'scale(1)';
+                digitElement.style.opacity = '1';
+                
+                setTimeout(() => {
+                    digitElement.classList.remove('scale-in');
+                }, 600);
+            }, 150);
         }
     }
     
@@ -373,18 +384,33 @@ class DigitRecognizerApp {
                 const probabilityFill = predictionRows[index].querySelector('.probability-fill');
                 
                 if (digitElement && percentageElement && probabilityFill) {
-                    digitElement.textContent = prediction.digit;
-                    const percentage = (prediction.probability * 100).toFixed(1);
-                    percentageElement.textContent = `${percentage}%`;
-                    probabilityFill.style.width = `${percentage}%`;
-                    // Solid color per rank for visual hierarchy
-                    if (index === 0) probabilityFill.style.background = '#22c55e';
-                    if (index === 1) probabilityFill.style.background = '#6366f1';
-                    if (index === 2) probabilityFill.style.background = '#f59e0b';
-                    
-                    // Add animation
-                    predictionRows[index].classList.add('fade-in');
-                    setTimeout(() => predictionRows[index].classList.remove('fade-in'), 500);
+                    // Stagger the animations
+                    setTimeout(() => {
+                        digitElement.textContent = prediction.digit;
+                        const percentage = (prediction.probability * 100).toFixed(1);
+                        percentageElement.textContent = `${percentage}%`;
+                        
+                        // Animate the progress bar
+                        probabilityFill.style.width = '0%';
+                        setTimeout(() => {
+                            probabilityFill.style.width = `${percentage}%`;
+                        }, 100);
+                        
+                        // Enhanced color gradients per rank
+                        if (index === 0) {
+                            probabilityFill.style.background = 'linear-gradient(90deg, #10b981 0%, #34d399 100%)';
+                        } else if (index === 1) {
+                            probabilityFill.style.background = 'linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%)';
+                        } else if (index === 2) {
+                            probabilityFill.style.background = 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)';
+                        }
+                        
+                        // Add staggered animations
+                        predictionRows[index].classList.add('slide-in-left');
+                        setTimeout(() => {
+                            predictionRows[index].classList.remove('slide-in-left');
+                        }, 600);
+                    }, index * 100);
                 }
             }
         });
@@ -396,16 +422,33 @@ class DigitRecognizerApp {
         
         if (confidenceFill && confidenceText) {
             const percentage = (confidence * 100).toFixed(1);
-            confidenceFill.style.width = `${percentage}%`;
+            
+            // Animate the confidence bar
+            confidenceFill.style.width = '0%';
+            setTimeout(() => {
+                confidenceFill.style.width = `${percentage}%`;
+            }, 200);
+            
             confidenceText.textContent = `${percentage}%`;
             
-            // Solid color coding based on confidence
+            // Enhanced gradient colors based on confidence
             if (confidence > 0.8) {
-                confidenceFill.style.background = '#22c55e';
+                confidenceFill.style.background = 'linear-gradient(90deg, #10b981 0%, #34d399 100%)';
+                confidenceFill.style.boxShadow = '0 0 15px var(--success-glow)';
             } else if (confidence > 0.5) {
-                confidenceFill.style.background = '#f59e0b';
+                confidenceFill.style.background = 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)';
+                confidenceFill.style.boxShadow = '0 0 15px var(--warning-glow)';
             } else {
-                confidenceFill.style.background = '#ef4444';
+                confidenceFill.style.background = 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)';
+                confidenceFill.style.boxShadow = '0 0 15px var(--danger-glow)';
+            }
+            
+            // Add pulse animation for high confidence
+            if (confidence > 0.9) {
+                confidenceFill.classList.add('pulse');
+                setTimeout(() => {
+                    confidenceFill.classList.remove('pulse');
+                }, 2000);
             }
         }
     }
@@ -421,7 +464,7 @@ class DigitRecognizerApp {
             (a, b) => b[1].confidence - a[1].confidence
         );
         
-        sortedResults.forEach(([modelId, result]) => {
+        sortedResults.forEach(([modelId, result], index) => {
             const card = document.createElement('div');
             card.className = 'model-comparison-card';
             
@@ -443,7 +486,17 @@ class DigitRecognizerApp {
                 </div>
             `;
             
+            // Add staggered animation
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
             comparisonContainer.appendChild(card);
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s var(--easing)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+                card.classList.add('fade-in');
+            }, index * 100);
         });
     }
 
