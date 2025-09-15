@@ -1,12 +1,5 @@
 {
   "version": 2,
-  "name": "digit-recognizer",
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
@@ -45,10 +38,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "training/train_model.py": {
-      "runtime": "python3.9"
-    }
-  }
+  ]
 }
