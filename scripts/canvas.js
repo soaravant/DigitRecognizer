@@ -10,7 +10,11 @@ class CanvasDrawer {
         this.isDrawing = false;
         this.lastX = 0;
         this.lastY = 0;
-        this.brushSize = 3;
+        this.brushSize = 10;
+        // Preprocessing options
+        this.targetSize = 50;           // Final side length fed to models
+        this.mnistCentering = true;     // Center-of-mass centering like MNIST
+        this.fitRatio = 0.8;            // Fit digit within 80% of the target box (MNIST uses 20x20 in 28x28)
         
         // Set up canvas properties
         this.setupCanvas();
@@ -84,8 +88,19 @@ class CanvasDrawer {
         const brushSizeValue = document.getElementById('brushSizeValue');
         
         if (brushSizeSlider && brushSizeValue) {
+            // Initialize slider and label to current brush size
+            try {
+                brushSizeSlider.value = String(this.brushSize);
+                brushSizeSlider.min = '10';
+            } catch (e) {}
+            brushSizeValue.textContent = this.brushSize;
             brushSizeSlider.addEventListener('input', (e) => {
-                this.brushSize = parseInt(e.target.value);
+                // Enforce minimum brush size of 10
+                const val = Math.max(10, parseInt(e.target.value));
+                if (val !== parseInt(e.target.value)) {
+                    e.target.value = String(val);
+                }
+                this.brushSize = val;
                 this.ctx.lineWidth = this.brushSize;
                 brushSizeValue.textContent = this.brushSize;
             });
@@ -209,7 +224,7 @@ class CanvasDrawer {
     }
     
     getCanvasData() {
-        // Return cropped, centered, scaled 200x200 grayscale array
+        // MNIST-style preprocessing: crop → scale to fit → center by center-of-mass → normalize/invert
         const bounds = this.getDrawingBounds();
         const padding = 10;
         const srcX = Math.max(0, bounds.minX - padding);
@@ -223,30 +238,67 @@ class CanvasDrawer {
         const cropW = isFinite(srcW) && srcW > 0 ? srcW : this.canvas.width;
         const cropH = isFinite(srcH) && srcH > 0 ? srcH : this.canvas.height;
 
-        const TARGET = 50;
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCanvas.width = TARGET;
-        tempCanvas.height = TARGET;
+        const TARGET = this.targetSize;
+        const fitBox = Math.round(TARGET * this.fitRatio); // e.g., 40px inside 50px
 
-        // Fit within TARGET with small margin (10%)
-        const targetBox = Math.round(TARGET * 0.9);
-        const scale = Math.min(targetBox / cropW, targetBox / cropH);
-        const scaledW = Math.max(1, Math.round(cropW * scale));
-        const scaledH = Math.max(1, Math.round(cropH * scale));
+        // Stage 1: scale the cropped digit to fit within fitBox while preserving aspect ratio
+        const scaledW = Math.max(1, Math.round(cropW * Math.min(fitBox / cropW, fitBox / cropH)));
+        const scaledH = Math.max(1, Math.round(cropH * Math.min(fitBox / cropW, fitBox / cropH)));
+
+        // Draw centered onto a clean TARGET x TARGET canvas
+        const base = document.createElement('canvas');
+        base.width = TARGET; base.height = TARGET;
+        const bctx = base.getContext('2d');
+        bctx.fillStyle = '#ffffff';
+        bctx.fillRect(0, 0, TARGET, TARGET);
         const dx = Math.floor((TARGET - scaledW) / 2);
         const dy = Math.floor((TARGET - scaledH) / 2);
+        bctx.drawImage(this.canvas, cropX, cropY, cropW, cropH, dx, dy, scaledW, scaledH);
 
-        // Fill white background; invert later
-        tempCtx.fillStyle = '#ffffff';
-        tempCtx.fillRect(0, 0, TARGET, TARGET);
+        // Optionally center by center-of-mass
+        let working = base;
+        if (this.mnistCentering) {
+            const { cx, cy, mass } = this.computeCenterOfMass(working);
+            // If there is mass, shift so mass center is at image center
+            if (mass > 1e-6) {
+                const tx = Math.round(TARGET / 2 - cx);
+                const ty = Math.round(TARGET / 2 - cy);
+                const shifted = document.createElement('canvas');
+                shifted.width = TARGET; shifted.height = TARGET;
+                const sctx = shifted.getContext('2d');
+                sctx.fillStyle = '#ffffff';
+                sctx.fillRect(0, 0, TARGET, TARGET);
+                sctx.drawImage(working, tx, ty);
+                working = shifted;
+            }
+        }
 
-        // Draw the cropped area scaled and centered
-        tempCtx.drawImage(this.canvas, cropX, cropY, cropW, cropH, dx, dy, scaledW, scaledH);
-
-        const scaledImageData = tempCtx.getImageData(0, 0, TARGET, TARGET);
+        const scaledImageData = working.getContext('2d').getImageData(0, 0, TARGET, TARGET);
         const data = this.preprocessImageData(scaledImageData);
         return { data, width: TARGET, height: TARGET };
+    }
+
+    computeCenterOfMass(canvas) {
+        const ctx = canvas.getContext('2d');
+        const { width: w, height: h } = canvas;
+        const img = ctx.getImageData(0, 0, w, h);
+        const d = img.data;
+        let sum = 0, sumX = 0, sumY = 0;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const i = (y * w + x) * 4;
+                // intensity: invert grayscale so strokes contribute positively
+                const gray = d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+                const val = (255 - gray) / 255; // 0..1, larger means darker stroke
+                if (val > 0) {
+                    sum += val;
+                    sumX += x * val;
+                    sumY += y * val;
+                }
+            }
+        }
+        if (sum <= 0) return { cx: canvas.width / 2, cy: canvas.height / 2, mass: 0 };
+        return { cx: sumX / sum, cy: sumY / sum, mass: sum };
     }
     
     preprocessImageData(imageData) {

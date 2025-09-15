@@ -400,7 +400,7 @@ class ModelTrainer:
             epochs=epochs,
             validation_data=(self.x_test, self.y_test),
             callbacks=callbacks_list,
-            verbose=1
+            verbose=0
         )
         
         self.histories[model_id] = history
@@ -464,12 +464,7 @@ class ModelTrainer:
             # Save Keras model
             model_path = os.path.join(base_path, f"{model_id}.h5")
             model.save(model_path)
-            
-            # Convert to TensorFlow.js
-            tfjs_path = os.path.join(base_path, f"{model_id}_tfjs")
-            tfjs.converters.save_keras_model(model, tfjs_path)
-            
-            print(f"Saved {name} to {model_path} and {tfjs_path}")
+            print(f"Saved {name} to {model_path}")
         
         # Save results summary
         results_path = os.path.join(base_path, 'training_results.json')

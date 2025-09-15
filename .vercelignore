@@ -66,6 +66,9 @@ logs/
 *.temp
 .cache/
 
+# Local stubs (not needed on Vercel)
+jax/
+
 # Environment variables
 .env
 .env.local

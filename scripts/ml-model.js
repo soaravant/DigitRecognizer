@@ -17,14 +17,14 @@ class MLModelHandler {
     }
     
     getModelConfigs() {
+        // Order models so Lightweight and Simple appear first in the selector
         return {
-            // Prefer a known good public MNIST model as default first option
-            'mnist_cdn': {
-                name: 'MNIST Pretrained (CDN)',
-                description: 'Pre-trained MNIST model loaded from CDN',
-                path: 'https://storage.googleapis.com/tfjs-models/tfjs/mnist/model.json',
-                parameters: '~0.8M',
-                accuracy: 'Pretrained'
+            'model_10': {
+                name: 'Lightweight CNN',
+                description: 'Optimized for speed and small size',
+                path: 'models/model_10_tfjs/model.json',
+                parameters: '~0.3M',
+                accuracy: '98.0%'
             },
             'model_1': {
                 name: 'Simple CNN',
@@ -32,6 +32,14 @@ class MLModelHandler {
                 path: 'models/model_1_tfjs/model.json',
                 parameters: '~1.2M',
                 accuracy: '98.5%'
+            },
+            // Keep CDN model visible but after local favorites
+            'mnist_cdn': {
+                name: 'MNIST Pretrained (CDN)',
+                description: 'Pre-trained MNIST model loaded from CDN',
+                path: 'https://storage.googleapis.com/tfjs-models/tfjs/mnist/model.json',
+                parameters: '~0.8M',
+                accuracy: 'Pretrained'
             },
             'model_2': {
                 name: 'Deep CNN',
@@ -88,13 +96,6 @@ class MLModelHandler {
                 path: 'models/model_9_tfjs/model.json',
                 parameters: '~2.1M',
                 accuracy: '99.2%'
-            },
-            'model_10': {
-                name: 'Lightweight CNN',
-                description: 'Optimized for speed and small size',
-                path: 'models/model_10_tfjs/model.json',
-                parameters: '~0.3M',
-                accuracy: '98.0%'
             }
         };
     }

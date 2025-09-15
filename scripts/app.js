@@ -119,11 +119,15 @@ class DigitRecognizerApp {
             modelCard.className = 'model-card';
             modelCard.dataset.modelId = modelId;
             
+            const accHtml = config.accuracy
+                ? `<div>Acc: ${config.accuracy}</div>`
+                : '';
+
             modelCard.innerHTML = `
                 <h4>${config.name}</h4>
                 <div class="model-stats">
-                    <div>${config.parameters}</div>
-                    <div>${config.accuracy}</div>
+                    <div>Par: ${config.parameters}</div>
+                    ${accHtml}
                 </div>
             `;
             
@@ -137,41 +141,60 @@ class DigitRecognizerApp {
         // Show model info
         this.updateModelInfo();
 
-        // Auto-select currently loaded model, if any
-        const defaultId = this.mlModelHandler.currentModelId;
-        if (defaultId) {
-            this.currentModelId = defaultId;
-            const selectedCard = document.querySelector(`[data-model-id="${defaultId}"]`);
-            if (selectedCard) selectedCard.classList.add('active');
-            this.updateModelInfo();
-            this.updateCurrentModelName();
+        // Prefer Lightweight CNN as default selection
+        const preferredId = 'model_10';
+        const defaultId = this.mlModelHandler.currentModelId || preferredId;
+
+        this.currentModelId = defaultId;
+        // Ensure UI highlights the preferred/current model
+        const selectedCard = document.querySelector(`[data-model-id="${defaultId}"]`) ||
+                             document.querySelector(`[data-model-id="${preferredId}"]`);
+        if (selectedCard) selectedCard.classList.add('active');
+
+        // If preferred model is loaded, switch to it explicitly
+        if (this.mlModelHandler.models && this.mlModelHandler.models[preferredId]) {
+            this.mlModelHandler.switchModel(preferredId);
+            this.currentModelId = preferredId;
         }
+
+        this.updateModelInfo();
+        this.updateCurrentModelName();
     }
 
     selectModel(modelId) {
-        // Update UI
-        document.querySelectorAll('.model-card').forEach(card => {
-            card.classList.remove('active');
-        });
-        
+        // Update UI highlight
+        document.querySelectorAll('.model-card').forEach(card => card.classList.remove('active'));
         const selectedCard = document.querySelector(`[data-model-id="${modelId}"]`);
-        if (selectedCard) {
-            selectedCard.classList.add('active');
-        }
-        
-        // Switch model
-        if (this.mlModelHandler.switchModel(modelId)) {
-            this.currentModelId = modelId;
-            this.updateModelInfo();
-            this.updateCurrentModelName();
-            
+        if (selectedCard) selectedCard.classList.add('active');
+
+        // Update title/info immediately regardless of load state
+        this.currentModelId = modelId;
+        this.updateModelInfo();
+        this.updateCurrentModelName();
+
+        // Switch if already loaded; otherwise load asynchronously
+        if (this.mlModelHandler.switchModel && this.mlModelHandler.switchModel(modelId)) {
             // Clear predictions when switching models
             this.clearPredictions();
-            
-            // If there's a drawing, make a new prediction
-            if (this.canvasDrawer && this.canvasDrawer.hasDrawing()) {
-                this.predictDigit();
-            }
+            if (this.canvasDrawer && this.canvasDrawer.hasDrawing()) this.predictDigit();
+            return;
+        }
+
+        // Load the model in the background and then switch
+        if (this.mlModelHandler.loadModel) {
+            try { this.mlModelHandler.showLoadingSpinner && this.mlModelHandler.showLoadingSpinner(); } catch(_) {}
+            this.mlModelHandler.loadModel(modelId)
+                .then(() => {
+                    this.mlModelHandler.switchModel && this.mlModelHandler.switchModel(modelId);
+                    this.clearPredictions();
+                    if (this.canvasDrawer && this.canvasDrawer.hasDrawing()) this.predictDigit();
+                })
+                .catch(err => {
+                    console.warn('Failed to load selected model:', err);
+                })
+                .finally(() => {
+                    try { this.mlModelHandler.hideLoadingSpinner && this.mlModelHandler.hideLoadingSpinner(); } catch(_) {}
+                });
         }
     }
 
@@ -184,8 +207,6 @@ class DigitRecognizerApp {
             modelInfo.innerHTML = `
                 <h4>${config.name}</h4>
                 <p><strong>Description:</strong> ${config.description}</p>
-                <p><strong>Parameters:</strong> ${config.parameters}</p>
-                <p><strong>Accuracy:</strong> ${config.accuracy}</p>
             `;
         } else {
             modelInfo.innerHTML = ``;
@@ -224,9 +245,14 @@ class DigitRecognizerApp {
                 
                 // Update comparison mode
                 this.comparisonMode = targetTab === 'compare';
+                // Indicate all models are selected in Compare view
+                this.toggleCompareSelectionStyles(this.comparisonMode);
                 
                 // Load models for comparison if needed
                 if (this.comparisonMode) {
+                    // Render placeholder cards immediately
+                    this.renderComparisonPlaceholders();
+                    // Load models lazily in the background
                     this.loadAllModelsForComparison();
                     if (this.canvasDrawer && this.canvasDrawer.hasDrawing()) {
                         this.predictWithAllModels();
@@ -253,9 +279,13 @@ class DigitRecognizerApp {
                 this.clearCanvas();
             }
             
-            // Clear predictions with 'r' key
+            // Re-run prediction with 'r' key
             if (e.key === 'r' || e.key === 'R') {
-                this.clearPredictions();
+                if (this.canvasDrawer && this.canvasDrawer.hasDrawing()) {
+                    this.predictDigit();
+                } else {
+                    this.clearPredictions();
+                }
             }
         });
     }
@@ -479,8 +509,6 @@ class DigitRecognizerApp {
                     <span class="confidence">${confidence}%</span>
                 </div>
                 <div class="model-comparison-stats">
-                    <div class="stat">Parameters: ${config.parameters}</div>
-                    <div class="stat">Accuracy: ${config.accuracy}</div>
                     ${result.fallback ? '<div class="stat">Fallback Mode</div>' : ''}
                     ${result.error ? `<div class="stat error">Error: ${result.error}</div>` : ''}
                 </div>
@@ -501,10 +529,50 @@ class DigitRecognizerApp {
     }
 
     clearComparisonPredictions() {
+        // Show placeholder cards for all models when no drawing is present
+        this.renderComparisonPlaceholders();
+    }
+
+    renderComparisonPlaceholders() {
         const comparisonContainer = document.getElementById('modelsComparison');
-        if (comparisonContainer) {
-            comparisonContainer.innerHTML = '<p style="text-align: center; color: #94a3b8;">Draw a digit to see model comparisons</p>';
-        }
+        if (!comparisonContainer || !this.mlModelHandler) return;
+        comparisonContainer.innerHTML = '';
+        const models = this.mlModelHandler.getAvailableModels();
+        Object.entries(models).forEach(([modelId, config], index) => {
+            const card = document.createElement('div');
+            card.className = 'model-comparison-card';
+            card.innerHTML = `
+                <h4>${config.name}</h4>
+                <div class="model-comparison-prediction">
+                    <span class="digit">-</span>
+                    <span class="confidence">-</span>
+                </div>
+                <div class="model-comparison-stats"></div>
+            `;
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            comparisonContainer.appendChild(card);
+            setTimeout(() => {
+                card.style.transition = 'all 0.4s var(--easing)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+    }
+
+    toggleCompareSelectionStyles(enable) {
+        const cards = document.querySelectorAll('.model-card');
+        cards.forEach(card => {
+            if (enable) {
+                card.classList.remove('active');
+                card.classList.add('compare-selected');
+            } else {
+                card.classList.remove('compare-selected');
+                if (this.currentModelId && card.dataset.modelId === this.currentModelId) {
+                    card.classList.add('active');
+                }
+            }
+        });
     }
 
     clearPredictions() {
@@ -598,6 +666,7 @@ class DigitRecognizerApp {
     onModelLoaded() {
         console.log('Model loaded successfully!');
         this.updateModelStatus();
+        if (this.comparisonMode) return; // don't flash selection while comparing
         // Sync current model selection in UI
         const loadedId = this.mlModelHandler.currentModelId;
         if (loadedId) {

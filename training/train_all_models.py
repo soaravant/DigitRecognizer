@@ -43,7 +43,7 @@ def create_directories():
         os.makedirs(directory, exist_ok=True)
         print(f"Created directory: {directory}")
 
-def train_models(epochs=15, batch_size=128, quick_mode=False):
+def train_models(epochs=15, batch_size=128, quick_mode=False, only_models=None, train_subset=None):
     """Train all 10 models"""
     print("="*60)
     print("TRAINING ALL 10 MODEL ARCHITECTURES")
@@ -58,9 +58,31 @@ def train_models(epochs=15, batch_size=128, quick_mode=False):
     print("\n1. Loading MNIST dataset...")
     trainer.load_data()
     
+    # Optionally subset training data to speed up quick runs
+    if train_subset and isinstance(train_subset, int) and train_subset > 0:
+        try:
+            trainer.x_train = trainer.x_train[:train_subset]
+            trainer.y_train = trainer.y_train[:train_subset]
+            print(f"Using training subset: {len(trainer.x_train)} samples")
+        except Exception as e:
+            print(f"Warning: could not subset training data: {e}")
+    
     # Create all models
     print("\n2. Creating all model architectures...")
     trainer.create_all_models()
+    
+    # If --only specified, filter models to train
+    if only_models:
+        wanted = set()
+        for item in only_models:
+            item = str(item).strip()
+            if item.startswith('model_'):
+                wanted.add(item)
+            elif item.isdigit():
+                wanted.add(f'model_{int(item)}')
+        if wanted:
+            trainer.models = {k: v for k, v in trainer.models.items() if k in wanted}
+            print(f"Training only models: {', '.join(trainer.models.keys())}")
     
     # Adjust epochs for quick mode
     if quick_mode:
@@ -289,6 +311,8 @@ def main():
     parser.add_argument('--skip-training', action='store_true', help='Skip training, only convert existing models')
     parser.add_argument('--test-only', action='store_true', help='Only test existing models')
     parser.add_argument('--deploy-package', action='store_true', help='Create deployment package')
+    parser.add_argument('--only', type=str, default='', help='Comma-separated list of model ids to train (e.g., 1,2,10 or model_1,model_2)')
+    parser.add_argument('--subset', type=int, default=0, help='Train on a subset of N training samples for speed')
     
     args = parser.parse_args()
     
@@ -308,10 +332,13 @@ def main():
     
     if not args.skip_training:
         # Train all models
+        only_list = [s for s in args.only.split(',') if s.strip()] if args.only else None
         trainer = train_models(
             epochs=args.epochs,
             batch_size=args.batch_size,
-            quick_mode=args.quick
+            quick_mode=args.quick,
+            only_models=only_list,
+            train_subset=args.subset if args.subset > 0 else None
         )
     else:
         print("Skipping training - using existing models")

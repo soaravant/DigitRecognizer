@@ -12,7 +12,6 @@
     <div class="container">
         <header class="header">
             <h1 class="title">Numberly</h1>
-            <p class="subtitle">Draw a digit and watch AI recognize it!</p>
             <div class="header-actions">
                 <button id="helpButton" class="btn btn-secondary">Help</button>
             </div>
@@ -31,9 +30,10 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="canvas-container">
                 <div class="canvas-wrapper">
+                    <div class="canvas-instructions">Draw a single digit and watch AI recognize it!</div>
                         <canvas id="drawingCanvas" width="400" height="400"></canvas>
                     <div class="canvas-overlay" id="canvasOverlay">
                         <div class="loading-spinner" id="loadingSpinner">
@@ -44,10 +44,11 @@
                 </div>
                 <div class="canvas-controls">
                     <button id="clearButton" class="btn btn-primary">Clear Canvas</button>
+                    <div class="shortcut-hint">or press "C"</div>
                     <div class="brush-controls">
                         <label for="brushSize">Brush Size:</label>
-                        <input type="range" id="brushSize" min="1" max="10" value="3">
-                        <span id="brushSizeValue">3</span>
+                        <input type="range" id="brushSize" min="10" max="20" value="10">
+                        <span id="brushSizeValue">10</span>
                     </div>
                     <div class="preprocess-preview">
                         <span>Model Input Preview</span>
@@ -70,12 +71,6 @@
                         <div class="tab-pane active" id="singleModelView">
                     <div class="model-prediction-header">
                         <h3 id="currentModelName">Select a Model</h3>
-                        <div class="confidence-indicator" id="confidenceIndicator">
-                            <div class="confidence-bar">
-                                <div class="confidence-fill" id="confidenceFill"></div>
-                            </div>
-                            <span class="confidence-text" id="confidenceText">0%</span>
-                        </div>
                     </div>
                     
                     <div class="prediction-results" id="predictionResults">
@@ -150,7 +145,7 @@
                     <li>Use the brush slider to adjust stroke thickness.</li>
                     <li>See the predicted digit and top 3 probabilities on the right.</li>
                     <li>Use the Compare All tab to view outputs from every model.</li>
-                    <li>Press "C" to clear the canvas, "R" to reset predictions.</li>
+                    <li>Press "C" to clear the canvas, "R" to re-run prediction.</li>
                 </ol>
             </div>
         </div>
